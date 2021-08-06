@@ -20,7 +20,7 @@ if sys.version_info < (3, 8):
         for element in it:
             total += element
             yield total
-            
+
     itertools.accumulate = accumulate
 
 
@@ -52,5 +52,5 @@ if version.parse(np.version.version) < version.parse("1.20"):
         """Broadcast the input shapes into a single shape."""
         arrays = [np.empty(x, dtype=[]) for x in args]
         return _broadcast_shape(*arrays)
-    
+
     np.broadcast_shapes = broadcast_shapes

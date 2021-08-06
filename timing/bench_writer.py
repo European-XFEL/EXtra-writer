@@ -144,13 +144,13 @@ def cumstat(stats, pfile):
     for fun, stat in stats.items():
         if pfile in fun[0] and not stat[4]:
             tm += stat[3]
-        if 'extra_writer/writer.py' in fun[0]:
+        if 'extra_writer/' in fun[0]:
             for prn, pstat in stat[4].items():
                 if pfile in prn[0]:
                     tm_wr2 += pstat[3]
         if 'h5py' in fun[0]:
             for prn, pstat in stat[4].items():
-                if 'extra_writer/writer.py' in prn[0]:
+                if 'extra_writer/' in prn[0]:
                     tm_wr2_h5 += pstat[3]
                 if pfile in prn[0]:
                     tm_h5 += pstat[3]
@@ -185,7 +185,7 @@ def bench(fun, tag, min_rep=3, max_rep=30, tm_limit=30):
 if __name__ == "__main__":
     os.makedirs("stats", exist_ok=True)
     os.makedirs("tmpwork", exist_ok=True)
-    
+
     max_trains = VectorWriterBuffered._meta.max_train_per_file
     vchunks = DS._chunks_autosize(max_trains, (1000,), np.dtype(float), 1)
 

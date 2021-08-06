@@ -18,7 +18,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name="EXtra-writer",
-    version=__version__,
+    version=version,
     author="Egor Sobolev",
     author_email="egor.sobolev@xfel.eu",
     maintainer="Egor Sobolev",
