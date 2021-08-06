@@ -43,6 +43,7 @@ setup(
             'pytest',
             'pytest-cov',
             'testpath',
+            'EXtra-data',
         ],
     },
     classifiers=[
