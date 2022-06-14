@@ -235,7 +235,10 @@ class FileWriterBase(object):
 
     def add_value(self, count, name, value):
         """Fills a single dataset across multiple trains"""
-        ds = self.datasets[name]
+        ds = self.datasets.get(name)
+        if ds is None:
+            raise KeyError(f"'{type(self).__qualname__}' does not have "
+                           f"a dataset named '{name}'")
 
         # check shape value
         nrec = ds.check_value(self, value)
@@ -258,7 +261,11 @@ class FileWriterBase(object):
 
     def add_train_value(self, name, value):
         """Fills a single dataset in the current train"""
-        ds = self.datasets[name]
+        ds = self.datasets.get(name)
+        if ds is None:
+            raise KeyError(f"'{type(self).__qualname__}' does not have "
+                           f"a dataset named '{name}'")
+
         nrec = ds.check_value(self, value)
 
         # check count
