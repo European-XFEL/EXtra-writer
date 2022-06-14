@@ -415,6 +415,47 @@ class FileWriter(FileWriterBase, metaclass=FileWriterMeta):
     """
     @classmethod
     def open(cls, fn, datasets, **kwargs):
+        """Constructs and instantiates a child class inheriting `FileWriter`.
+        
+        Constructs a child class inheriting :class:`FileWriter`. Attributes for
+        the new class should be given in the `dataset` dict. Keys in the dict must
+        be the identifiers and values must inherit from descripotor :class:Dataset.
+        
+        Other keyword arguments are transformed into attrubutes of special nested
+        class `Meta`.
+
+        Example:
+
+        .. code-block:: python
+            datasets = dict(
+                gv = DS('@ctrl', 'geom.fragmentVectors', (4,3,3), float),
+                nb = DS('@ctrl', 'param.numberOfBins', (), np.uint64),
+            )
+            aliases = {
+                'ctrl': 'MID_DET_AGIPD1M-1/x/y',
+            }
+            filename = 'mydata-{seq:03d}.h5'
+            wr = FileWriter.open(filename, datasets, aliases=aliases,
+                                 break_into_sequence=True)
+        
+        this is equivalent to
+        
+        .. code-block:: python
+            class MyFileWriter(FileWriter):
+                gv = DS('@ctrl', 'geom.fragmentVectors', (4,3,3), float),
+                nb = DS('@ctrl', 'param.numberOfBins', (), np.uint64),
+        
+                class Meta:
+                    break_into_sequence = True
+                    aliases = {
+                        'ctrl': '{det_name}/x/y',
+                    }
+
+            wr = MyFileWriter('mydata-{seq:03d}.h5')
+
+        There is no expansion of substitutes and parameters in this constructor
+        since the constructed class is not reused.
+        """
         class_name = cls.__name__ + '_' + str(id(datasets))
 
         aliases = kwargs.get('aliases', {})
