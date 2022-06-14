@@ -1,5 +1,7 @@
 import os.path as osp
 import numpy as np
+import pytest
+
 from tempfile import TemporaryDirectory
 from testpath import assert_isfile
 
@@ -59,10 +61,13 @@ def test_writer():
                 wr.add_train(tid, 0)
                 # add data
                 wr.add_train_data(gv=gv, nb=nbin, rlim=(0.003, 0.016))
+                
+                with pytest.raises(TypeError):
+                    wr.pid = pulses
 
-                wr.tid = [tid] * npulse
-                wr.pid = pulses
-                wr.v = v
+                wr.next.tid = [tid] * npulse
+                wr.next.pid = pulses
+                wr.next.v = v
 
         vref = np.concatenate(vref, 0)
 
