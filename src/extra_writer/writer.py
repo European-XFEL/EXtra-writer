@@ -1,4 +1,5 @@
 import h5py
+import string
 import numpy as np
 
 from .dataset_descriptor import DatasetBase, Dataset, BlockedSetter
@@ -96,6 +97,11 @@ class FileWriterBase(object):
         return super().__new__(cls)
 
     def __init__(self, filename, **kwargs):
+        fnfields = string.Formatter().parse(filename)
+        fn_has_seq = any(fld[1] == 'seq' for fld in fnfields)
+        if self._meta.break_into_sequence and not fn_has_seq:
+            raise ValueError("'filename' arguments does not have 'seq' field")
+
         self._ds_attrs = {}
         self._train_data = {}
         self.trains = []
