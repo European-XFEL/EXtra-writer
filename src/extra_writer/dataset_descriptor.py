@@ -25,7 +25,7 @@ class BlockedSetter(DataSetterBase):
             "'class_attrs_interface=True' to enable it.")
 
 
-class DataSetter(DataSetterBase):
+class MultiTrainDataSetter(DataSetterBase):
     """Overrides the setters for attributes which declared as datasets
     in order to use the assignment operation for adding data in a train
     """
@@ -36,7 +36,23 @@ class DataSetter(DataSetterBase):
         if isinstance(value, MultiTrainData):
             instance.add_value(value.count, self.name, value.data)
         else:
-            instance.add_train_value(self.name, value)
+            raise TypeError(f"The attribute '{self.name}' accepts only "
+                            "'MultiTrainData' instance")
+
+class SingleTrainDataSetter(DataSetterBase):
+    def __init__(self, name):
+        self.name = name
+
+    def __set__(self, instance, value):
+        instance.add_train_value(self.name, value)
+
+
+class NextTrainProxy:
+    def __init__(self, writer):
+        self.writer = writer
+
+    def add_train_value(self, name, value):
+        self.writer.add_train_value(name, value)
 
 
 # Attention! `Dataset` is the descriptor class and its instances are
@@ -175,9 +191,13 @@ class Dataset(DatasetBase):
         attr = self(writer)
         return self.source_class(writer, attr.source_name, attr.stype)
 
-    def get_attribute_setter(self, name):
+    def get_mtrain_setter(self, name):
         """Returns suitable attribute setter instance"""
-        return DataSetter(name)
+        return MultiTrainDataSetter(name)
+
+    def get_strain_setter(self, name):
+        """Returns suitable attribute setter instance"""
+        return SingleTrainDataSetter(name)
 
     def get_dataset_fullname(self, writer):
         # expected to return (source_name, key, stype)

@@ -2,7 +2,9 @@ import h5py
 import string
 import numpy as np
 
-from .dataset_descriptor import DatasetBase, Dataset, BlockedSetter
+from .dataset_descriptor import (
+    DatasetBase, Dataset, BlockedSetter, NextTrainProxy
+)
 
 
 class Options:
@@ -76,12 +78,18 @@ class FileWriterMeta(type):
         base_meta = getattr(new_class, '_meta', None)
         new_class._meta = Options(meta, base_meta)
 
+        attr_setters = {}
         for ds_name, ds in datasets.items():
             ds.resolve_name(new_class._meta.aliases)
             if new_class._meta.class_attrs_interface:
-                setattr(new_class, ds_name, ds.get_attribute_setter(ds_name))
+                setattr(new_class, ds_name, ds.get_mtrain_setter(ds_name))
+                attr_setters[ds_name] = ds.get_strain_setter(ds_name)
             else:
                 setattr(new_class, ds_name, BlockedSetter())
+                attr_setters[ds_name] = BlockedSetter()
+
+        new_class.NextTrain = type(
+            cls.__name__ + '.NextTrain', (NextTrainProxy,), attr_setters)
 
         return new_class
 
@@ -135,6 +143,8 @@ class FileWriterBase(object):
         for dsname, ds in self.datasets.items():
             src_name = ds(self).source_name
             self.sources[src_name].add(dsname, ds)
+
+        self.next = self.NextTrain(self)
 
         file = h5py.File(filename.format(seq=self.seq), 'w')
         try:
