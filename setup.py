@@ -28,11 +28,13 @@ setup(
     long_description_content_type='text/markdown',
     license="BSD-3-Clause",
     install_requires=[
+        'packaging',
         'h5py>=2.7.1',
         'numpy',
     ],
     extras_require={
         'docs': [
+            'sphinx_rtd_theme',
             'sphinx',
             'nbsphinx',
             'ipython',  # For nbsphinx syntax highlighting

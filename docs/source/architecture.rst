@@ -51,14 +51,14 @@ Retains data added to one key in memory until all source keys are filled with
 data.
 
 
-knows nothing about the data format, whether they match
+:Invariant: :class:`DataQueue` knows nothing about the data format, whether they match
 the key and how to write it out.
 
 :Invariant: the data held by the :class:`DataQueue` cannot be written to
     disk because such writing would violate the file format. If the data
     is still in the :class:`DataQueue` when writing is done, it drops.
 
-:class:`DatasetWriterBase` is a class that writers data. It determines how
+:class:`DatasetWriterBase` is a class that writes data. It determines how
 exactly and in what chunks the data will be written.
 
 :Invariant: only it knows how to write data.

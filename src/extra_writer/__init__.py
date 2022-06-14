@@ -45,4 +45,4 @@ DS = Dataset
 trs_ = MultiTrainData
 
 
-__all__ = ["FileWriter", "DS", "trs_"]
+__all__ = ["FileWriter", "DS", "trs_", "Dataset", "MultiTrainData"]
